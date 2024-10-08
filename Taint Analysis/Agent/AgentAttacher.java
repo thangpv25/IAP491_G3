@@ -6,7 +6,7 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 public class AgentAttacher {
     public static void main(String[] args) {
         String agentPath = "target\\classes\\org\\example\\agent1.jar";
-        String targetPid= "1984"; //"args[0]";
+        String targetPid= "4816"; //"args[0]";
 //      Load vao PID cua JVM da dinh san
         try {
             VirtualMachine vm = VirtualMachine.attach(targetPid);  // VirtualMachine vm = VirtualMachine.attach(targetPid);
