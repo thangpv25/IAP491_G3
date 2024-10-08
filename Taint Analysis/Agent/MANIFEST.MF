@@ -1,0 +1,4 @@
+Main-Class: org.example.AgentAttacher
+Agent-Class: org.example.Agent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
