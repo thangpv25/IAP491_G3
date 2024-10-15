@@ -1,0 +1,15 @@
+org\code\common\Decompiler.class
+org\code\utils\ClassUtils.class
+org\code\utils\SearchUtils.class
+org\code\common\ClassDumpTransformer.class
+org\code\utils\InstrumentationUtils.class
+org\code\utils\matcher\Matcher.class
+org\code\utils\LogUtils.class
+org\code\utils\matcher\RegexMatcher.class
+org\code\utils\matcher\WildcardMatcher.class
+org\code\filter.class
+org\code\filter$DefineTransformer.class
+org\code\common\Decompiler$1$1.class
+org\code\utils\PathUtils.class
+org\code\common\Decompiler$1.class
+org\code\utils\StringUtils.class
