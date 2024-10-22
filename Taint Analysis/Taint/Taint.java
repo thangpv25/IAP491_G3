@@ -1,11 +1,3 @@
-import boomerang.*;
-import boomerang.results.BackwardBoomerangResults;
-import boomerang.scene.ControlFlowGraph;
-import boomerang.scene.DataFlowScope;
-import boomerang.scene.SootDataFlowScope;
-import boomerang.scene.Statement;
-import boomerang.scene.jimple.JimpleMethod;
-import boomerang.util.AccessPath;
 import soot.*;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JAssignStmt;
