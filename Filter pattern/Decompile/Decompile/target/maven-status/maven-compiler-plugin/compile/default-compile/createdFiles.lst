@@ -1,0 +1,8 @@
+org\example\common\ClassDumpTransformer.class
+org\example\Decompile.class
+org\example\common\Decompiler$1.class
+org\example\common\Decompiler.class
+org\example\common\Decompiler$1$1.class
+org\example\utils\PathUtils.class
+org\example\utils\LogUtils.class
+org\example\utils\StringUtils.class
