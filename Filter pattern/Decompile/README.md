@@ -15,6 +15,4 @@
 2. **Attach Agent**
    - Sau khi JAR được build, có thể attach nó vào tiến trình Java mong muốn.
 
-## Trạng Thái Phát Triển
 
-- Hiện tại, code chưa thực hiện bộ lọc. Tính năng này đang được phát triển.
