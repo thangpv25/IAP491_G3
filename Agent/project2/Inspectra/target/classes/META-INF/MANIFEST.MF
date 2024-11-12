@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: org.example.Loader.AgentAttacher
+Agent-Class: org.example.Loader.Agent
+Can-Redefine-Classes: True
+Can-Retransform-Classes: True
