@@ -14,8 +14,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
-
 public class TaintAnalysisTest extends IFDSTestSetUp {
 
     @Override
@@ -29,6 +27,8 @@ public class TaintAnalysisTest extends IFDSTestSetUp {
         SootClass sinkClass = new SootClass("target.taint.internal.SinkClass");
         SootMethodRef sink1 = new SootMethodRefImpl(sinkClass, "anInstanceSink", Collections.emptyList(), RefType.v("java.lang.String"), false);
         SootMethodRef sink2 = new SootMethodRefImpl(sinkClass, "aStaticSink", Collections.emptyList(), RefType.v("java.lang.String"), true);
+
+
 
         SootClass handlerMethodMappingClass = Scene.v().getSootClass("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping");
         SootMethodRef registerMapping = new SootMethodRefImpl(handlerMethodMappingClass, "registerMapping", Collections.emptyList(), VoidType.v(), false);
@@ -92,6 +92,27 @@ public class TaintAnalysisTest extends IFDSTestSetUp {
         };
     }
 
+    private String getMethodSignature(SootMethod method) {
+        // Get the method name, return type, and parameter types for clarity
+        StringBuilder signature = new StringBuilder();
+        signature.append(method.getReturnType().toString());
+        signature.append(" ");
+        signature.append(method.getDeclaringClass().getName());
+        signature.append(".");
+        signature.append(method.getName());
+        signature.append("(");
+
+        List<Type> parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.size(); i++) {
+            signature.append(parameterTypes.get(i).toString());
+            if (i < parameterTypes.size() - 1) {
+                signature.append(", ");
+            }
+        }
+        signature.append(")");
+
+        return signature.toString();
+    }
 
     private Set<String> getResult(Object analysis) {
         List<SootMethod> entryPoints = getEntryPointMethods(); // Get all entry points
@@ -112,7 +133,12 @@ public class TaintAnalysisTest extends IFDSTestSetUp {
             // Add results from this method to the main result set
             if (res != null) {
                 for (Map.Entry<DFF, Integer> e : res.entrySet()) {
-                    result.add(e.getKey().toString());
+                    String dffString = e.getKey().toString();
+                    result.add(dffString);
+
+                    // Print method details for identification
+                    System.out.println("Method: " + getMethodSignature(m));
+                    System.out.println("Tainted flow: " + dffString);
                 }
             }
         }
@@ -231,11 +257,11 @@ public class TaintAnalysisTest extends IFDSTestSetUp {
         Set<String> defaultIDEResult = getResult(analysis);
     }
 
-    @Test
-    public void Branching5() {
-        JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.Branching5.class.getName());
-        Set<String> defaultIDEResult = getResult(analysis);
-    }
+    //@Test
+    //public void Branching5() {
+    //    JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.Branching5.class.getName());
+    //    Set<String> defaultIDEResult = getResult(analysis);
+    //}
 
 
     @Test
@@ -253,6 +279,24 @@ public class TaintAnalysisTest extends IFDSTestSetUp {
     @Test
     public void filterMem() {
         JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.FilterSetupServlet.class.getName());
+        Set<String> defaultIDEResult = getResult(analysis);
+    }
+
+    @Test
+    public void AddTomcatListener() {
+        JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.AddTomcatListener.AddTomcatListener.class.getName());
+        Set<String> defaultIDEResult = getResult(analysis);
+    }
+
+    //@Test
+    //public void AddController() {
+    //    JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.AddController.AddController.class.getName());
+    //    Set<String> defaultIDEResult = getResult(analysis);
+    //}
+
+    @Test
+    public void AddInterceptor() {
+        JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = executeStaticAnalysis(target.taint.AddInterceptor.AddInterceptor.class.getName());
         Set<String> defaultIDEResult = getResult(analysis);
     }
 }
