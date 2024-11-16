@@ -16,7 +16,7 @@ public class BytecodeUtils {
                 try {
                     // Use reflection to invoke defineClass (which is protected)
                     Method defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-                    defineClassMethod.setAccessible(true);  // Make the method accessible
+                    defineClassMethod.setAccessible(true);
                     return (Class<?>) defineClassMethod.invoke(this, name, bytecode, 0, bytecode.length);
                 } catch (Exception e) {
                     throw new ClassNotFoundException("Failed to define class from bytecode", e);
