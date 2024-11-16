@@ -7,14 +7,19 @@ import org.junit.Test;
 import soot.*;
 import soot.jimple.toolkits.ide.JimpleIFDSSolver;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
+import target.taint.Evil;
 import test.base.IFDSTestSetUp;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.lang.reflect.Method;
 
 public class TaintAnalysis extends IFDSTestSetUp {
 
     @Override
     protected Transformer createAnalysisTransformer() {
+
         List<SootMethodRef> sources = new ArrayList<>();
         List<SootMethodRef> sinks = new ArrayList<>();
 
@@ -110,17 +115,36 @@ public class TaintAnalysis extends IFDSTestSetUp {
         return result;
     }
 
+    public static byte[] readByteCode(String classFilePath) throws IOException {
+        return Files.readAllBytes(Paths.get(classFilePath));
+    }
+
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the target class name: ");
-        String targetClassName = scanner.nextLine();
+        //Scanner scanner = new Scanner(System.in);
+        //System.out.println("Enter the target class name: ");
+        //String targetClassName = scanner.nextLine();
 
         try {
             TaintAnalysis test = new TaintAnalysis();
-            JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = test.executeStaticAnalysis(targetClassName);
+            String className = "Evil";
+            String classPath = "D:\\Download\\Java 8\\TaintAnalysis-updated\\target\\test-classes\\target\\taint\\";
+
+            // Read bytecode
+            byte[] bytecode = readByteCode(classPath + className + ".class");
+
+            // Define the class from bytecode
+            Class<?> clazz = BytecodeUtils.defineClassFromBytecode(bytecode);
+
+            // Parse the dynamically loaded class
+            JimpleIFDSSolver<?, ? extends InterproceduralCFG<Unit, SootMethod>> analysis = test.executeStaticAnalysis(clazz.getName());
+
+            // Get results from the analysis
             Set<String> defaultIDEResult = test.getResult(analysis);
+
         } catch (Exception e) {
             System.err.println("Error during analysis: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
