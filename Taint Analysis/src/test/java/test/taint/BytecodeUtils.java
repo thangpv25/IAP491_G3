@@ -25,10 +25,9 @@ public class BytecodeUtils {
         };
 
         // Define the class using the name extracted from bytecode
-        return customClassLoader.loadClass(className); // Load class with the name extracted from bytecode
+        return customClassLoader.loadClass(className); 
     }
 
-    // Method to extract the class name from the bytecode using ASM
     private static String getClassNameFromBytecode(byte[] bytecode) throws Exception {
         ClassReader reader = new ClassReader(bytecode);
         return reader.getClassName().replace('/', '.'); 
