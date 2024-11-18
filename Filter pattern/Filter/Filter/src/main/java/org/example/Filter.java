@@ -32,19 +32,22 @@ public class Filter {
     // Define risky java sign new filter, listener, servlet, controller, interceptor
     static List<String> signFilter = List.of(
             "setFilterName(",
-            "getDeclaredMethod(\"setFilterName"
+            "getDeclaredMethod(\"setFilterName",
+            "addFilter("
     );
 
     static List<String> signListener = List.of(
             "addApplicationEventListener(",
-            "getDeclaredMethod(\"addApplicationEventListener"
+            "getDeclaredMethod(\"addApplicationEventListener",
+            "addListener("
     );
 
     static List<String> signServlet = List.of(
             "addServletMapping(",
             "addServletMappingDecoded(",
             "ServletRegistration.Dynamic", //interface servlet tomcat => cho phép đăng ký mới một servlet
-            "ApplicationServletRegistration"
+            "ApplicationServletRegistration",
+            "addServlet("
     );
 
     static List<String> signController = List.of(
@@ -158,6 +161,12 @@ public class Filter {
                 }
             }
 
+            if (shouldAdd) {
+                resultFiles.add(file);
+                Points.add(riskPoint);
+                continue;  // Tiếp tục với file tiếp theo mà không cần kiểm tra các điều kiện còn lại
+            }
+
             //check risky keyword
             if (!shouldAdd) {  // Chỉ kiểm tra keyword nếu chưa đánh dấu là risky
                 for (String keyword : riskKeyword) {
@@ -170,28 +179,31 @@ public class Filter {
                 }
             }
 
+            if (shouldAdd) {
+                resultFiles.add(file);
+                Points.add(riskPoint);
+                continue;  // Tiếp tục với file tiếp theo mà không cần kiểm tra các điều kiện còn lại
+            }
+
             // Kiểm tra và in ra các chuỗi có độ dài lớn hơn 100 ký tự
-            if (!shouldAdd) {
-                List<String> longStrings = new ArrayList<>();
-                while (matcher.find()) {
-                    String str = matcher.group(1); // Lấy chuỗi trong dấu ngoặc kép
-                    if (str.length() > 100) {
-                        longStrings.add(str);
-                    }
+            List<String> longStrings = new ArrayList<>();
+            while (matcher.find()) {
+                String str = matcher.group(1); // Lấy chuỗi trong dấu ngoặc kép
+                if (str.length() > 100) {
+                    longStrings.add(str);
                 }
-                if (!longStrings.isEmpty()) {
-                    riskPoint += 1;
-                    LogUtils.logit("Found large String in: " + fileName + " - Risk Point: " + riskPoint);
-                }
+            }
+            if (!longStrings.isEmpty()) {
+                riskPoint += 1;
+                LogUtils.logit("Found large String in: " + fileName + " - Risk Point: " + riskPoint);
             }
 
             //Kiểm tra sử dụng base64lib
-            if (!shouldAdd) {
-                if(content.contains("sun.misc.BASE64Decoder") || content.contains("java.util.Base64")) {
-                    riskPoint += 1;
-                    LogUtils.logit("Found the use of base64 lib in the file: " + fileName + " - Risk Point: " + riskPoint);
-                }
+            if(content.contains("sun.misc.BASE64Decoder") || content.contains("java.util.Base64")) {
+                riskPoint += 1;
+                LogUtils.logit("Found the use of base64 lib in the file: " + fileName + " - Risk Point: " + riskPoint);
             }
+
 
 //          Check dynamic invoke class (java reflection)
             if (!shouldAdd) {
@@ -261,7 +273,7 @@ public class Filter {
 
 
             // If any risky condition is found, add to results
-            if (shouldAdd) {
+            if (shouldAdd || !longStrings.isEmpty() || content.contains("sun.misc.BASE64Decoder") || content.contains("java.util.Base64")) {
                 resultFiles.add(file);
                 Points.add(riskPoint);
 
